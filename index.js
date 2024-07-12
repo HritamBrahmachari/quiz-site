@@ -7,10 +7,8 @@ async function quiz() {
     } catch (error) {
         console.error('Error fetching quiz data:', error);
     }
- 
 }
 
-var m, n, o, q;
 var cat = document.getElementById('cat');
 var p = document.getElementById('p');
 var b1 = document.getElementById('b1');
@@ -18,100 +16,79 @@ var b2 = document.getElementById('b2');
 var b3 = document.getElementById('b3');
 var b4 = document.getElementById('b4');
 var b5 = document.getElementById('b5');
-var i = Math.floor(Math.random() * 10);
-var j = Math.floor(Math.random() * 3);
-var k = Math.floor(Math.random() * 3);
-var l = Math.floor(Math.random() * 3);
-var m = Math.floor(Math.random() * 4);
-var n = Math.floor(Math.random() * 4);
-var o = Math.floor(Math.random() * 4);
-
- q = Math.floor(Math.random() * 4);
 var array;
+var correctAnswer;
+
 async function quizes() {
-   
     const data = await quiz();
 
-    var b = document.querySelectorAll('.b');
-
-
-    cat.innerHTML = `<h2> CATEGORY: ${data[i].category} </h2>`;
-    p.innerHTML = `<h2> QUESTION: ${data[i].question.text} </h2>`;
+    // Display elements
+    cat.innerHTML = `<h2> CATEGORY: ${data[0].category} </h2>`;
+    p.innerHTML = `<h2> QUESTION: ${data[0].question.text} </h2>`;
     b1.style.display = 'inline';
     b2.style.display = 'inline';
     b3.style.display = 'inline';
     b4.style.display = 'inline';
     b5.style.display = 'inline';
-
-    do {
-        j = Math.floor(Math.random() * 3);
-        k = Math.floor(Math.random() * 3);
-        l = Math.floor(Math.random() * 3);
-    } while (j === k || k === l || j === l) {
-
-
-        array = [data[i].correctAnswer, data[i].incorrectAnswers[j], data[i].incorrectAnswers[k], data[i].incorrectAnswers[l]];
-
-    }
-
-
-    do {
-        m = Math.floor(Math.random() * 4);
-        n = Math.floor(Math.random() * 4);
-        o = Math.floor(Math.random() * 4);
-        q = Math.floor(Math.random() * 4);
-    } while (m === n || m === o || m === q || n === o || n === q || o === q) {
-
-        b1.innerHTML = `<p>${array[m]}</p>`;
-        b2.innerHTML = `<p>${array[n]}</p>`;
-        b3.innerHTML = `<p>${array[o]}</p>`;
-        b4.innerHTML = `<p>${array[q]}</p>`;
-       
-      
-
-    }
-}
-
-async function checks() {
-  
-    const data = await quiz();
-    
-    array = [data[i].correctAnswer, data[i].incorrectAnswers[j], data[i].incorrectAnswers[k], data[i].incorrectAnswers[l]];
-
-    var check = [m, n, o, q];
-
-    if (array[check[0]] === data[i].correctAnswer ) {
-        b2.style.backgroundColor = 'green';
-        b2.style.color = 'white';
-    } 
-    else if (array[check[1]] === data[i].correctAnswer ) {
-        b1.style.backgroundColor = 'green';
-        b1.style.color = 'white';
-    }
-    else if (array[check[2]] === data[i].correctAnswer ) {
-        b3.style.backgroundColor = ' green';
-        b3.style.color = 'white';
-    } else if (array[check[3]] === data[i].correctAnswer) {
-        b4.style.backgroundColor = 'green';
-        b4.style.color = 'white';
-    } 
-
+    p.style.display = 'inline';
+    b5.style.backgroundColor = 'cyan';
    
+    let j, k, l;
+    do {
+        j = Math.floor(Math.random() * data[0].incorrectAnswers.length);
+        k = Math.floor(Math.random() * data[0].incorrectAnswers.length);
+        l = Math.floor(Math.random() * data[0].incorrectAnswers.length);
+    } while (j === k || k === l || j === l);
+
+    array = [data[0].correctAnswer, data[0].incorrectAnswers[j], data[0].incorrectAnswers[k], data[0].incorrectAnswers[l]];
+    correctAnswer = data[0].correctAnswer;
+
+    let m, n, o, q;
+    do {
+        m = Math.floor(Math.random() * array.length);
+        n = Math.floor(Math.random() * array.length);
+        o = Math.floor(Math.random() * array.length);
+        q = Math.floor(Math.random() * array.length);
+    } while (m === n || m === o || m === q || n === o || n === q || o === q);
+
+    b1.innerText = array[m];
+    b2.innerText = array[n];
+    b3.innerText = array[o];
+    b4.innerText = array[q];
 }
 
+function checks(selectedButton) {
+    [b1, b2, b3, b4].forEach((btn) => {
+        if (btn.innerText === correctAnswer) {
+            btn.style.backgroundColor = 'green';
+            btn.style.color = 'white';
+        } else if (btn === selectedButton) {
+            btn.style.backgroundColor = 'red';
+            btn.style.color = 'white';
+        } else {
+            btn.style.backgroundColor = 'white';
+            btn.style.color = 'black';
+        }
+    });
+}
 
-b1.addEventListener('click', async () => { await checks() });
-b2.addEventListener('click', async () => { await checks() });
-b3.addEventListener('click', async () => { await checks() });
-b4.addEventListener('click', async () => { await checks() });
+[b1, b2, b3, b4].forEach((btn) => {
+    btn.addEventListener('click', () => {
+        checks(btn);
+    });
+});
+
 b5.addEventListener('click', () => {
     b1.style.backgroundColor = 'white';
     b1.style.color = 'black';
     b2.style.backgroundColor = 'white';
-b2.style.color = ' black';
+    b2.style.color = 'black';
     b3.style.backgroundColor = 'white';
     b3.style.color = 'black';
-b4.style.backgroundColor = 'white';  
-b4.style.color = 'black';});
-b5.addEventListener('click', async () => { await quizes() });
+    b4.style.backgroundColor = 'white';
+    b4.style.color = 'black';
+    quizes();
+});
 
+// Initialize quiz
+quizes();
